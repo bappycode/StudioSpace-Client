@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 64" width="520" height="128">
+  <rect width="260" height="64" fill="#141018"/>
+  <g transform="translate(8,8)">
+    <rect width="48" height="48" rx="12" fill="#F5A524"/>
+    <g color="#141018"><circle cx="24" cy="24" r="13" fill="none" stroke="currentColor" stroke-width="2.6"/>
+  <path d="M24.00 18.80L36.81 26.20 M28.50 21.40L28.50 36.20 M28.50 26.60L15.69 34.00 M24.00 29.20L11.19 21.80 M19.50 26.60L19.50 11.80 M19.50 21.40L32.31 14.00" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></g>
+  </g>
+  <text x="68" y="42" font-family="'Space Grotesk','Inter',system-ui,sans-serif" font-size="27" font-weight="700" letter-spacing="-0.5" fill="#FFFFFF">Studio<tspan fill="#F5A524">Space</tspan></text>
+</svg>
