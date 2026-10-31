@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { CalendarCheckIcon, LayoutDashboardIcon, ListIcon, LogOutIcon, MenuIcon, PlusIcon } from 'lucide-react';
+import { CalendarCheckIcon, ChevronDownIcon, LayoutDashboardIcon, ListIcon, LogOutIcon, MenuIcon, PlusIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -45,8 +45,10 @@ export const Logo = () => (
     </Link>
 );
 
-const UserAvatar = ({ name, image }: { name: string; image?: string | null }) => (
-    <Avatar>
+type UserAvatarProps = { name: string; image?: string | null; className?: string };
+
+const UserAvatar = ({ name, image, className }: UserAvatarProps) => (
+    <Avatar className={className}>
         <AvatarImage src={image ?? undefined} alt={name} />
         <AvatarFallback className="bg-primary text-primary-foreground">
             {name.charAt(0).toUpperCase()}
@@ -100,21 +102,26 @@ const NavBar = () => {
                 </ul>
 
                 {isPending ? (
-                    <div className="hidden size-9 rounded-full bg-muted md:block" />
+                    <div className="hidden h-10 w-32 animate-pulse rounded-full bg-muted md:block" />
                 ) : user ? (
                     <div className="hidden md:flex">
                         <DropdownMenu>
                             <DropdownMenuTrigger
-                                render={<Button variant="ghost" size="icon-lg" className="rounded-full" />}
+                                render={<Button variant="outline" className="h-10 gap-2 rounded-full pr-3 pl-1" />}
                                 aria-label="Open user menu"
                             >
                                 <UserAvatar name={user.name} image={user.image} />
+                                <span className="max-w-28 truncate">{user.name.split(' ')[0]}</span>
+                                <ChevronDownIcon className="text-muted-foreground transition-transform group-data-popup-open/button:rotate-180" />
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56">
+                            <DropdownMenuContent align="end" className="w-64">
                                 <DropdownMenuGroup>
-                                    <DropdownMenuLabel>
-                                        <p className="font-medium text-foreground">{user.name}</p>
-                                        <p className="truncate text-xs font-normal">{user.email}</p>
+                                    <DropdownMenuLabel className="flex items-center gap-3 py-2">
+                                        <UserAvatar name={user.name} image={user.image} className="size-10" />
+                                        <div className="min-w-0">
+                                            <p className="truncate font-medium text-foreground">{user.name}</p>
+                                            <p className="truncate text-xs font-normal">{user.email}</p>
+                                        </div>
                                     </DropdownMenuLabel>
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
