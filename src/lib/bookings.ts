@@ -1,4 +1,6 @@
-export const bookingStatuses = ['Pending', 'Confirmed', 'Completed', 'Cancelled'] as const;
+import { requestServer, sendJson } from '@/lib/api';
+
+export const bookingStatuses =['Pending', 'Confirmed', 'Completed', 'Cancelled'] as const;
 
 export type BookingStatus = (typeof bookingStatuses)[number];
 
@@ -47,23 +49,11 @@ export const formatBookingTime = (time: string) =>
         timeZone: 'UTC',
     });
 
-// Throws with the server's message (e.g. the 409 double-booking error) so callers can toast it
-const requestServer = async (path: string, init?: RequestInit) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}${path}`, init);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message ?? `Request failed (${res.status})`);
-    return data;
-};
-
 export const getMyBookings = (email: string): Promise<Booking[]> =>
     requestServer(`/my-bookings/${encodeURIComponent(email)}`);
 
-export const createBooking = (booking: BookingRequest) =>
-    requestServer('/my-bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(booking),
-    });
+// A 409 here is the server's double-booking check; its message is shown to the user as-is
+export const createBooking = (booking: BookingRequest) => sendJson('/my-bookings', 'POST', booking);
 
 export const cancelBooking = (id: string, email: string) =>
     requestServer(`/my-bookings/${id}/cancel?email=${encodeURIComponent(email)}`, { method: 'PATCH' });

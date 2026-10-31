@@ -1,3 +1,5 @@
+import { requestServer, sendJson } from '@/lib/api';
+
 // `label` names a single studio (badges, filters); `pluralLabel` names the category (footer, home cards)
 export const studioCategories = [
     { slug: 'photo-studio', label: 'Photo Studio', pluralLabel: 'Photo Studios' },
@@ -44,6 +46,23 @@ export type Studio = {
     reviewCount?: number;
     reviews?: Review[];
 };
+
+// The host-editable fields; the PATCH route updates exactly these
+export type StudioInput = Pick<
+    Studio,
+    | 'title'
+    | 'category'
+    | 'hourlyRate'
+    | 'securityDeposit'
+    | 'maxCapacity'
+    | 'location'
+    | 'image'
+    | 'gallery'
+    | 'amenities'
+    | 'overview'
+>;
+
+export type StudioOwner = { name: string; email: string };
 
 export type StudioQuery = {
     category?: CategorySlug;
@@ -129,6 +148,26 @@ export const getStudios = async (category?: CategorySlug): Promise<Studio[]> => 
     if (!res.ok) throw new Error(`Failed to load studios (${res.status})`);
     return res.json();
 };
+
+// The server stores the body as-is, so ownership and the listing date are set here
+export const createStudio = (studio: StudioInput, owner: StudioOwner) =>
+    sendJson('/add-studios', 'POST', {
+        ...studio,
+        ownerName: owner.name,
+        ownerEmail: owner.email,
+        createdAt: new Date().toISOString(),
+    });
+
+// The server rejects with 403 unless ownerEmail matches the studio's owner
+export const updateStudio = (id: string, studio: StudioInput, ownerEmail: string) =>
+    sendJson(`/studios/${id}`, 'PATCH', { ...studio, ownerEmail });
+
+// The server only deletes when email matches the owner (403 otherwise)
+export const deleteStudio = (id: string, ownerEmail: string) =>
+    requestServer(`/studios/${id}?email=${encodeURIComponent(ownerEmail)}`, { method: 'DELETE' });
+
+export const getMyListings = (email: string): Promise<Studio[]> =>
+    requestServer(`/my-listings/${encodeURIComponent(email)}`);
 
 // Server returns the 6 top-rated studios, newest first on ties
 export const getFeaturedStudios = async (): Promise<Studio[]> => {
