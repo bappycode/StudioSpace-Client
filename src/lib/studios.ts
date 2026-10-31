@@ -130,6 +130,13 @@ export const getStudios = async (category?: CategorySlug): Promise<Studio[]> => 
     return res.json();
 };
 
+// Server returns the 6 top-rated studios, newest first on ties
+export const getFeaturedStudios = async (): Promise<Studio[]> => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/featured-studios`);
+    if (!res.ok) throw new Error(`Failed to load featured studios (${res.status})`);
+    return res.json();
+};
+
 // Resolves to null for unknown ids (server sends null) and malformed ids (server sends 400)
 export const getStudio = async (id: string): Promise<Studio | null> => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/studios/${id}`);

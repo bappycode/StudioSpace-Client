@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRightIcon, ArrowUpRightIcon, CameraIcon, ClapperboardIcon, MicIcon, MusicIcon, PaletteIcon } from 'lucide-react';
+import { ArrowUpRightIcon, CameraIcon, ClapperboardIcon, MicIcon, MusicIcon, PaletteIcon } from 'lucide-react';
 import { cn } from 'cn';
+import SectionHeader from '@/components/home/section-header';
 import { buildStudiosHref, getStudios, studioCategories, type CategorySlug } from '@/lib/studios';
 
 const categoryVisuals: Record<CategorySlug, { icon: typeof CameraIcon; image: string }> = {
@@ -33,19 +34,12 @@ const CategorySection = async () => {
 
     return (
         <section className="mx-auto w-full max-w-7xl px-4 py-20">
-            <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <p className="text-xs font-semibold tracking-wider text-primary uppercase">Browse by category</p>
-                    <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Find the right room for the job</h2>
-                    <p className="mt-2 max-w-xl text-muted-foreground">
-                        From daylight cyc walls to treated vocal booths, every space is built for a different kind of
-                        creative work.
-                    </p>
-                </div>
-                <Link href="/studios" className="flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
-                    View all studios <ArrowRightIcon className="size-4" />
-                </Link>
-            </div>
+            <SectionHeader
+                eyebrow="Browse by category"
+                title="Find the right room for the job"
+                description="From daylight cyc walls to treated vocal booths, every space is built for a different kind of creative work."
+                action={{ href: '/studios', label: 'View all studios' }}
+            />
 
             {/* The first category takes a 2×2 tile; the other four fill the remaining 2×2 block */}
             <div className="grid auto-rows-[200px] gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[220px]">
