@@ -1,4 +1,4 @@
-import { requestServer, sendJson } from '@/lib/api';
+import { SERVER_URL, requestServer, sendJson } from '@/lib/api';
 
 // `label` names a single studio (badges, filters); `pluralLabel` names the category (footer, home cards)
 export const studioCategories = [
@@ -150,7 +150,7 @@ export const filterStudios = (studios: Studio[], { search, sort, minRate, maxRat
 
 export const getStudios = async (category?: CategorySlug): Promise<Studio[]> => {
     const path = category ? `/studios/category/${category}` : '/studios';
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}${path}`);
+    const res = await fetch(`${SERVER_URL}${path}`);
     if (!res.ok) throw new Error(`Failed to load studios (${res.status})`);
     return res.json();
 };
@@ -177,14 +177,14 @@ export const getMyListings = (email: string): Promise<Studio[]> =>
 
 // Server returns the 6 top-rated studios, newest first on ties
 export const getFeaturedStudios = async (): Promise<Studio[]> => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/featured-studios`);
+    const res = await fetch(`${SERVER_URL}/featured-studios`);
     if (!res.ok) throw new Error(`Failed to load featured studios (${res.status})`);
     return res.json();
 };
 
 // Resolves to null for unknown ids (server sends null) and malformed ids (server sends 400)
 export const getStudio = async (id: string): Promise<Studio | null> => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/studios/${id}`);
+    const res = await fetch(`${SERVER_URL}/studios/${id}`);
     if (res.status === 400) return null;
     if (!res.ok) throw new Error(`Failed to load studio (${res.status})`);
     return res.json();
