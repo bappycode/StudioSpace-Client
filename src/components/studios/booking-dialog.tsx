@@ -18,15 +18,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth-client';
-import { createBooking, getBookedHours } from '@/lib/bookings';
+import { createBooking, getBookedHours, getToday } from '@/lib/bookings';
 import type { Studio } from '@/lib/studios';
 
 type BookingDialogProps = {
     studio: Pick<Studio, '_id' | 'title' | 'image' | 'location' | 'hourlyRate' | 'securityDeposit'>;
 };
-
-// en-CA formats as YYYY-MM-DD, matching the <input type="date"> value format
-const getToday = () => new Date().toLocaleDateString('en-CA');
 
 const SummaryRow = ({ label, value }: { label: string; value: string }) => (
     <div className="flex justify-between">

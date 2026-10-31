@@ -2,15 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CalendarIcon, ClockIcon, MapPinIcon } from 'lucide-react';
 import { cn } from 'cn';
+import BookingStatusBadge from '@/components/bookings/booking-status-badge';
 import CancelBookingButton from '@/components/bookings/cancel-booking-button';
-import { formatBookingDate, formatBookingTime, type Booking, type BookingStatus } from '@/lib/bookings';
-
-const statusStyles: Record<BookingStatus, string> = {
-    Pending: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
-    Confirmed: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
-    Completed: 'bg-sky-500/15 text-sky-700 dark:text-sky-400',
-    Cancelled: 'bg-muted text-muted-foreground',
-};
+import { formatBookingDate, formatBookingTime, type Booking } from '@/lib/bookings';
 
 const DetailChip = ({ icon: Icon, children }: { icon: typeof CalendarIcon; children: React.ReactNode }) => (
     <span className="flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5">
@@ -36,9 +30,7 @@ const BookingCard = ({ booking }: { booking: Booking }) => {
 
             <div className="flex flex-1 flex-col gap-4 p-5 sm:p-6">
                 <div className="space-y-2">
-                    <span className={cn('inline-flex rounded-full px-2.5 py-1 text-xs font-semibold', statusStyles[status])}>
-                        {status}
-                    </span>
+                    <BookingStatusBadge status={status} />
                     <h2 className="text-lg font-semibold">
                         <Link href={`/studios/${studioId}`} className="hover:text-primary">
                             {studioTitle}

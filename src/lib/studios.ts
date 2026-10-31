@@ -77,7 +77,13 @@ type SearchParams = Record<string, string | string[] | undefined>;
 export const getCategoryLabel = (slug: string) =>
     studioCategories.find((category) => category.slug === slug)?.label ?? slug;
 
-const isCategorySlug = (value?: string): value is CategorySlug =>
+// Averages only rated studios; new listings without reviews would drag the number down
+export const formatAverageRating = (studios: Studio[]) => {
+    const ratings = studios.flatMap((studio) => (studio.rating ? [studio.rating] : []));
+    return ratings.length ? (ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length).toFixed(1) : '—';
+};
+
+const isCategorySlug =(value?: string): value is CategorySlug =>
     studioCategories.some((category) => category.slug === value);
 
 const isSortOption = (value?: string): value is SortOption =>

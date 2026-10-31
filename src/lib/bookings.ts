@@ -32,6 +32,15 @@ const toMinutes = (time: string) => {
 export const getBookedHours = (startTime: string, endTime: string) =>
     startTime && endTime ? (toMinutes(endTime) - toMinutes(startTime)) / 60 : 0;
 
+// en-CA formats as YYYY-MM-DD, the same shape as booking dates and <input type="date"> values
+export const getToday = () => new Date().toLocaleDateString('en-CA');
+
+export const isUpcoming = (booking: Booking) =>
+    (booking.status === 'Pending' || booking.status === 'Confirmed') && booking.date >= getToday();
+
+export const sortByStartTime = (bookings: Booking[]) =>
+    [...bookings].sort((a, b) => `${a.date} ${a.startTime}`.localeCompare(`${b.date} ${b.startTime}`));
+
 // Booking dates and times have no timezone, so format them in UTC to keep the day and hour unchanged
 export const formatBookingDate = (date: string) =>
     new Date(date).toLocaleDateString('en-US', {

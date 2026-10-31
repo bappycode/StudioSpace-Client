@@ -2,31 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BuildingIcon, DollarSignIcon, MessageSquareIcon, PlusIcon, StarIcon } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
+import StatTile from '@/components/stat-tile';
 import ListingRow from '@/components/studios/listing-row';
-import { getMyListings } from '@/lib/studios';
+import { formatAverageRating, getMyListings } from '@/lib/studios';
 import { requireUser } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'My Studio Listings | StudioSpace' };
-
-type SummaryTileProps = {
-    icon: typeof StarIcon;
-    label: string;
-    value: string;
-};
-
-const SummaryTile = ({ icon: Icon, label, value }: SummaryTileProps) => (
-    <div className="flex items-center gap-3 rounded-2xl border bg-card p-4">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Icon className="size-5" />
-        </span>
-        <div>
-            <p className="text-xs text-muted-foreground">{label}</p>
-            <p className="text-lg font-semibold">{value}</p>
-        </div>
-    </div>
-);
-
-const average = (values: number[]) => values.reduce((sum, value) => sum + value, 0) / values.length;
 
 const EmptyState = () => (
     <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed px-6 py-16 text-center">
@@ -49,16 +30,12 @@ const MyListingsPage = async () => {
     const user = await requireUser('/my-listings');
     const studios = await getMyListings(user.email);
 
-    const ratings = studios.flatMap((studio) => (studio.rating ? [studio.rating] : []));
     const reviewCount = studios.reduce((sum, studio) => sum + (studio.reviews?.length ?? 0), 0);
+    const averageRate = studios.reduce((sum, studio) => sum + studio.hourlyRate, 0) / studios.length;
     const summary = [
         { icon: BuildingIcon, label: 'Active listings', value: String(studios.length) },
-        {
-            icon: DollarSignIcon,
-            label: 'Average rate',
-            value: studios.length ? `$${Math.round(average(studios.map((studio) => studio.hourlyRate)))}/hr` : '—',
-        },
-        { icon: StarIcon, label: 'Average rating', value: ratings.length ? average(ratings).toFixed(1) : '—' },
+        { icon: DollarSignIcon, label: 'Average rate', value: studios.length ? `$${Math.round(averageRate)}/hr` : '—' },
+        { icon: StarIcon, label: 'Average rating', value: formatAverageRating(studios) },
         { icon: MessageSquareIcon, label: 'Reviews received', value: String(reviewCount) },
     ];
 
@@ -78,7 +55,7 @@ const MyListingsPage = async () => {
                 <>
                     <section className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
                         {summary.map((tile) => (
-                            <SummaryTile key={tile.label} {...tile} />
+                            <StatTile key={tile.label} {...tile} />
                         ))}
                     </section>
                     <ul className="space-y-4">

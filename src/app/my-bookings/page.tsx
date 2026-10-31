@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { CalendarXIcon } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import BookingCard from '@/components/bookings/booking-card';
-import { bookingStatuses, getMyBookings, type BookingStatus } from '@/lib/bookings';
+import { bookingStatuses, getMyBookings, sortByStartTime, type BookingStatus } from '@/lib/bookings';
 import { requireUser } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'My Bookings | StudioSpace' };
@@ -34,9 +34,7 @@ const MyBookingsPage = async ({ searchParams }: PageProps<'/my-bookings'>) => {
     const { status } = await searchParams;
     const activeStatus = isBookingStatus(status) ? status : undefined;
 
-    const bookings = (await getMyBookings(user.email)).sort((a, b) =>
-        `${a.date} ${a.startTime}`.localeCompare(`${b.date} ${b.startTime}`)
-    );
+    const bookings = sortByStartTime(await getMyBookings(user.email));
     const visibleBookings = activeStatus ? bookings.filter((booking) => booking.status === activeStatus) : bookings;
     const countFor = (tab?: BookingStatus) =>
         tab ? bookings.filter((booking) => booking.status === tab).length : bookings.length;
