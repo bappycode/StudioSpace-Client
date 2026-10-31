@@ -129,3 +129,11 @@ export const getStudios = async (category?: CategorySlug): Promise<Studio[]> => 
     if (!res.ok) throw new Error(`Failed to load studios (${res.status})`);
     return res.json();
 };
+
+// Resolves to null for unknown ids (server sends null) and malformed ids (server sends 400)
+export const getStudio = async (id: string): Promise<Studio | null> => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/studios/${id}`);
+    if (res.status === 400) return null;
+    if (!res.ok) throw new Error(`Failed to load studio (${res.status})`);
+    return res.json();
+};
