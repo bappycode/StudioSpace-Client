@@ -20,7 +20,7 @@ import { formatBookingTime, getMyBookings, isUpcoming, sortByStartTime, type Boo
 import { formatAverageRating, getMyListings, type Studio } from '@/lib/studios';
 import { requireUser } from '@/lib/session';
 
-export const metadata: Metadata = { title: 'Dashboard | StudioSpace' };
+export const metadata: Metadata = { title: 'Dashboard' };
 
 const quickActions = [
     { href: '/studios', label: 'Explore Studios', description: 'Find a space for your next shoot', icon: CompassIcon },

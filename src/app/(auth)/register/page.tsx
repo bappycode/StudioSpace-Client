@@ -1,4 +1,4 @@
-import { GalleryVerticalEnd } from "lucide-react"
+import Image from "next/image"
 
 import { SignupForm } from "@/components/signup-form"
 
@@ -13,10 +13,12 @@ export default function SignupPage() {
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">
-        <img
-          src="/placeholder.svg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        <Image
+          src="https://images.unsplash.com/photo-1527011046414-4781f1f94f8c?w=1400&q=80"
+          alt="Photo studio with softboxes and a white backdrop"
+          fill
+          sizes="50vw"
+          className="object-cover dark:brightness-[0.4]"
         />
       </div>
     </div>

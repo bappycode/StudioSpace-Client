@@ -7,7 +7,7 @@ import ListingRow from '@/components/studios/listing-row';
 import { formatAverageRating, getMyListings } from '@/lib/studios';
 import { requireUser } from '@/lib/session';
 
-export const metadata: Metadata = { title: 'My Studio Listings | StudioSpace' };
+export const metadata: Metadata = { title: 'My Studio Listings' };
 
 const EmptyState = () => (
     <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed px-6 py-16 text-center">

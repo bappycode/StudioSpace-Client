@@ -1,20 +1,18 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { auth } from './lib/auth'
-import { headers } from 'next/headers'
-
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { auth } from './lib/auth';
 
 export async function proxy(request: NextRequest) {
- const session = await auth.api.getSession({
-  headers: await headers()
- })
-const user = session?.user
-if(!user){
-  return NextResponse.redirect(new URL('/login', request.url))
-}
+    const session = await auth.api.getSession({ headers: request.headers });
 
+    if (!session?.user) {
+        // Send the user back to the page they wanted once they've logged in
+        const loginUrl = new URL('/login', request.url);
+        loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
+        return NextResponse.redirect(loginUrl);
+    }
 }
 
 export const config = {
-  matcher: ['/my-bookings', '/add-studio', '/my-listings', '/studios/edit/:path', "/dashboard"],
-}
+    matcher: ['/my-bookings', '/add-studio', '/my-listings', '/studios/edit/:path*', '/dashboard'],
+};

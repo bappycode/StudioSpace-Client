@@ -4,7 +4,7 @@ import StudioForm from '@/components/studios/studio-form';
 import { getStudio } from '@/lib/studios';
 import { requireUser } from '@/lib/session';
 
-export const metadata: Metadata = { title: 'Update Studio | StudioSpace' };
+export const metadata: Metadata = { title: 'Update Studio' };
 
 const EditStudioPage = async ({ params }: PageProps<'/studios/edit/[id]'>) => {
     const { id } = await params;

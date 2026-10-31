@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import StudioForm from '@/components/studios/studio-form';
 import { requireUser } from '@/lib/session';
 
-export const metadata: Metadata = { title: 'Add New Studio | StudioSpace' };
+export const metadata: Metadata = { title: 'Add New Studio' };
 
 const AddStudioPage = async () => {
     const user = await requireUser('/add-studio');

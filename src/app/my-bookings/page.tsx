@@ -6,7 +6,7 @@ import BookingCard from '@/components/bookings/booking-card';
 import { bookingStatuses, getMyBookings, sortByStartTime, type BookingStatus } from '@/lib/bookings';
 import { requireUser } from '@/lib/session';
 
-export const metadata: Metadata = { title: 'My Bookings | StudioSpace' };
+export const metadata: Metadata = { title: 'My Bookings' };
 
 const isBookingStatus = (value: unknown): value is BookingStatus => bookingStatuses.includes(value as BookingStatus);
 

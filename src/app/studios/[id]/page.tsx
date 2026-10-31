@@ -20,7 +20,7 @@ import { buildStudiosHref, getCategoryLabel, getStudio } from '@/lib/studios';
 
 export const generateMetadata = async ({ params }: PageProps<'/studios/[id]'>): Promise<Metadata> => {
     const studio = await getStudio((await params).id);
-    return { title: studio ? `${studio.title} | StudioSpace` : 'Studio not found | StudioSpace' };
+    return { title: studio ? studio.title : 'Studio not found' };
 };
 
 const SectionHeading = ({ children }: { children: React.ReactNode }) => (
