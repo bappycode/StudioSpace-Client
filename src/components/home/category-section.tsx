@@ -33,7 +33,7 @@ const CategorySection = async () => {
     const countFor = (slug: CategorySlug) => studios.filter((studio) => studio.category === slug).length;
 
     return (
-        <section className="mx-auto w-full max-w-7xl px-4 py-20">
+        <section className="mx-auto w-full max-w-7xl px-4 pt-20">
             <SectionHeader
                 eyebrow="Browse by category"
                 title="Find the right room for the job"
