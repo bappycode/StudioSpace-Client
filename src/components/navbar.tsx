@@ -24,8 +24,8 @@ import { authClient } from '@/lib/auth-client';
 const links = [
     { href: '/', label: 'Home' },
     { href: '/studios', label: 'Explore Studios' },
-    { href: '/how-it-works', label: 'How It Works' },
-    { href: '/about', label: 'About Us' },
+    { href: '/#how-it-works', label: 'How It Works' },
+    { href: '/#about', label: 'About Us' },
 ];
 
 const userLinks = [

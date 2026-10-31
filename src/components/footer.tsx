@@ -7,6 +7,7 @@ import { FaInstagram, FaLinkedinIn, FaXTwitter, FaYoutube } from 'react-icons/fa
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/navbar';
+import { buildStudiosHref, studioCategories } from '@/lib/studios';
 
 const quickLinks = [
     { href: '/', label: 'Home' },
@@ -16,13 +17,6 @@ const quickLinks = [
     { href: '/add-studio', label: 'Host Your Space' },
 ];
 
-const categories = [
-    { slug: 'photo-studio', label: 'Photo Studios' },
-    { slug: 'film-stage', label: 'Sound Stages' },
-    { slug: 'podcast-lounge', label: 'Podcast Rooms' },
-    { slug: 'music-suite', label: 'Music Suites' },
-    { slug: 'workshop', label: 'Art Workshops' },
-];
 
 const socials = [
     { href: 'https://x.com', label: 'X', icon: FaXTwitter },
@@ -93,10 +87,10 @@ const Footer = () => {
                 <div>
                     <FooterHeading>Popular Studios</FooterHeading>
                     <ul className="space-y-3">
-                        {categories.map(({ slug, label }) => (
+                        {studioCategories.map(({ slug, pluralLabel }) => (
                             <li key={slug}>
-                                <Link href={`/studios?category=${slug}`} className={footerLinkClass}>
-                                    {label}
+                                <Link href={buildStudiosHref({ category: slug })} className={footerLinkClass}>
+                                    {pluralLabel}
                                 </Link>
                             </li>
                         ))}
