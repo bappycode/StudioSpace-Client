@@ -3,7 +3,6 @@ import { LoginForm } from "@/components/login-form"
 export default async function Page({ searchParams }: PageProps<"/login">) {
   const { redirect } = await searchParams
 
-  // only allow internal paths like "/my-bookings" (not "//evil.com")
   const redirectTo =
     typeof redirect === "string" && redirect.startsWith("/") && !redirect.startsWith("//")
       ? redirect

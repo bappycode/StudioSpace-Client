@@ -25,7 +25,6 @@ type ConfirmDialogProps = {
     onConfirm: () => Promise<unknown>;
 };
 
-// Destructive actions go through this modal (no browser confirm()), then refresh the server-rendered list
 const ConfirmDialog = ({
     trigger,
     title,

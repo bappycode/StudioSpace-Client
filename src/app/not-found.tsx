@@ -4,7 +4,6 @@ import { buttonVariants } from '@/components/ui/button';
 
 const stripeOffsets = [64, 100, 136, 172, 208, 244];
 
-// A clapperboard marked "Scene 404" under a spotlight; theme tokens keep it readable in light and dark mode
 const ClapperboardIllustration = () => (
     <svg viewBox="0 0 320 250" className="w-full max-w-sm" role="img" aria-labelledby="not-found-art">
         <title id="not-found-art">A film clapperboard under a spotlight, marked scene 404</title>
@@ -23,7 +22,6 @@ const ClapperboardIllustration = () => (
             TAKE 1
         </text>
 
-        {/* The clapper stick hangs open, hinged at the top-left corner of the board */}
         <g transform="rotate(-14 70 92)">
             <clipPath id="clapper-stick">
                 <rect x="66" y="66" width="188" height="26" rx="6" />

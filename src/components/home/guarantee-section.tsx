@@ -26,7 +26,6 @@ const guarantees = [
     },
 ];
 
-// Doubles as the "About Us" anchor in the navbar
 const GuaranteeSection = () => (
     <section id="about" className="mx-auto w-full max-w-7xl scroll-mt-20 px-4 pt-20">
         <div className="grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-16">

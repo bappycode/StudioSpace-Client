@@ -1,4 +1,3 @@
-// Own skeleton so the details page doesn't fall back to the /studios grid skeleton
 const StudioDetailsLoading = () => (
     <main className="mx-auto w-full max-w-7xl px-4 py-10">
         <div className="mb-6 h-4 w-64 animate-pulse rounded bg-muted" />

@@ -1,8 +1,10 @@
-import { requestServer, sendJson } from '@/lib/api';
+import { getClientToken, requestServer } from '@/lib/api';
 
-export const bookingStatuses =['Pending', 'Confirmed', 'Completed', 'Cancelled'] as const;
+export const bookingStatuses = ['Pending', 'Confirmed', 'Completed', 'Cancelled'] as const;
 
 export type BookingStatus = (typeof bookingStatuses)[number];
+
+export type BookingView = 'guest' | 'host';
 
 export type BookingRequest = {
     studioId: string;
@@ -11,7 +13,6 @@ export type BookingRequest = {
     location: string;
     email: string;
     userName: string;
-    // YYYY-MM-DD — the server's overlap check compares dates as plain strings
     date: string;
     startTime: string;
     endTime: string;
@@ -22,7 +23,32 @@ export type BookingRequest = {
 export type Booking = BookingRequest & {
     _id: string;
     status: BookingStatus;
+    cancelledBy?: 'Client' | 'Owner';
 };
+
+export const getMyBookings = (email: string, token: string) =>
+    requestServer<Booking[]>(`/my-bookings/${encodeURIComponent(email)}`, { token });
+
+export const getListingBookings = (email: string, token: string) =>
+    requestServer<Booking[]>(`/listing-bookings/${encodeURIComponent(email)}`, { token });
+
+export const createBooking = async (booking: BookingRequest) =>
+    requestServer('/my-bookings', { method: 'POST', body: booking, token: await getClientToken() });
+
+export const confirmBooking = async (id: string) =>
+    requestServer(`/my-bookings/${id}/confirm`, { method: 'PATCH', token: await getClientToken() });
+
+export const cancelBooking = async (id: string, view: BookingView) =>
+    requestServer(`/${view === 'host' ? 'listing-bookings' : 'my-bookings'}/${id}/cancel`, {
+        method: 'PATCH',
+        token: await getClientToken(),
+    });
+
+export const isBookingStatus =(value: unknown): value is BookingStatus =>
+    bookingStatuses.includes(value as BookingStatus);
+
+export const filterByStatus = (bookings: Booking[], status?: BookingStatus) =>
+    status ? bookings.filter((booking) => booking.status === status) : bookings;
 
 const toMinutes = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
@@ -32,8 +58,14 @@ const toMinutes = (time: string) => {
 export const getBookedHours = (startTime: string, endTime: string) =>
     startTime && endTime ? (toMinutes(endTime) - toMinutes(startTime)) / 60 : 0;
 
-// en-CA formats as YYYY-MM-DD, the same shape as booking dates and <input type="date"> values
 export const getToday = () => new Date().toLocaleDateString('en-CA');
+
+const hasEnded = (booking: Booking) => new Date(`${booking.date}T${booking.endTime}`) <= new Date();
+
+export const withCompletedStatus = (bookings: Booking[]): Booking[] =>
+    bookings.map((booking) =>
+        booking.status === 'Confirmed' && hasEnded(booking) ? { ...booking, status: 'Completed' } : booking
+    );
 
 export const isUpcoming = (booking: Booking) =>
     (booking.status === 'Pending' || booking.status === 'Confirmed') && booking.date >= getToday();
@@ -41,7 +73,6 @@ export const isUpcoming = (booking: Booking) =>
 export const sortByStartTime = (bookings: Booking[]) =>
     [...bookings].sort((a, b) => `${a.date} ${a.startTime}`.localeCompare(`${b.date} ${b.startTime}`));
 
-// Booking dates and times have no timezone, so format them in UTC to keep the day and hour unchanged
 export const formatBookingDate = (date: string) =>
     new Date(date).toLocaleDateString('en-US', {
         weekday: 'short',
@@ -57,12 +88,3 @@ export const formatBookingTime = (time: string) =>
         minute: '2-digit',
         timeZone: 'UTC',
     });
-
-export const getMyBookings = (email: string): Promise<Booking[]> =>
-    requestServer(`/my-bookings/${encodeURIComponent(email)}`);
-
-// A 409 here is the server's double-booking check; its message is shown to the user as-is
-export const createBooking = (booking: BookingRequest) => sendJson('/my-bookings', 'POST', booking);
-
-export const cancelBooking = (id: string, email: string) =>
-    requestServer(`/my-bookings/${id}/cancel?email=${encodeURIComponent(email)}`, { method: 'PATCH' });

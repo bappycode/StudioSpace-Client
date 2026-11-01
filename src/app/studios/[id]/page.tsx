@@ -19,7 +19,8 @@ import StudioReviews from '@/components/studios/studio-reviews';
 import { buildStudiosHref, getCategoryLabel, getStudio } from '@/lib/studios';
 
 export const generateMetadata = async ({ params }: PageProps<'/studios/[id]'>): Promise<Metadata> => {
-    const studio = await getStudio((await params).id);
+    const { id } = await params;
+    const studio = await getStudio(id);
     return { title: studio ? studio.title : 'Studio not found' };
 };
 
@@ -49,7 +50,8 @@ const formatHostSince = (createdAt: string) =>
     new Date(createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 
 const StudioDetailsPage = async ({ params }: PageProps<'/studios/[id]'>) => {
-    const studio = await getStudio((await params).id);
+    const { id } = await params;
+    const studio = await getStudio(id);
     if (!studio) notFound();
 
     const {
@@ -149,7 +151,6 @@ const StudioDetailsPage = async ({ params }: PageProps<'/studios/[id]'>) => {
                     </section>
                 </div>
 
-                {/* Booking card comes first on mobile so the main action is visible without scrolling */}
                 <aside className="order-first space-y-4 self-start lg:sticky lg:top-24 lg:order-none">
                     <div className="rounded-3xl border bg-card p-6 shadow-sm">
                         <p className="mb-5">

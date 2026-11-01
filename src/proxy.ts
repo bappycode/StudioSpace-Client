@@ -6,7 +6,6 @@ export async function proxy(request: NextRequest) {
     const session = await auth.api.getSession({ headers: request.headers });
 
     if (!session?.user) {
-        // Send the user back to the page they wanted once they've logged in
         const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
         return NextResponse.redirect(loginUrl);
@@ -14,5 +13,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/my-bookings', '/add-studio', '/my-listings', '/studios/edit/:path*', '/dashboard'],
+    matcher: ['/my-bookings', '/booking-requests', '/add-studio', '/my-listings', '/studios/edit/:path*', '/dashboard'],
 };

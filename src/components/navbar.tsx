@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { CalendarCheckIcon, ChevronDownIcon, LayoutDashboardIcon, ListIcon, LogOutIcon, MenuIcon, PlusIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { CalendarCheckIcon, ChevronDownIcon, InboxIcon, LayoutDashboardIcon, ListIcon, LogOutIcon, MenuIcon, PlusIcon } from 'lucide-react';
+import { cn } from 'cn';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -34,6 +34,7 @@ const userLinks = [
     { href: '/add-studio', label: 'Add New Studio', icon: PlusIcon },
     { href: '/my-listings', label: 'My Studio Listings', icon: ListIcon },
     { href: '/my-bookings', label: 'My Bookings', icon: CalendarCheckIcon },
+    { href: '/booking-requests', label: 'Booking Requests', icon: InboxIcon },
 ];
 
 export const Logo = () => (
@@ -152,7 +153,7 @@ const NavBar = () => {
                             </Link>
                         </div>
                     )}
-    
+
                     <Sheet open={open} onOpenChange={setOpen}>
                         <SheetTrigger
                             className={cn(buttonVariants({ variant: 'ghost', size: 'icon-lg' }), 'lg:hidden')}
@@ -175,7 +176,7 @@ const NavBar = () => {
                                     </li>
                                 ))}
                             </ul>
-    
+
                             {user ? (
                                 <div className="mt-auto flex flex-col gap-4 border-t p-4">
                                     <div className="flex items-center gap-3">

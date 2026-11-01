@@ -20,6 +20,8 @@ import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "sonner"
+import { FcGoogle } from "react-icons/fc"
+import { FaGithub } from "react-icons/fa"
 
 export function LoginForm({
   className,
@@ -28,24 +30,19 @@ export function LoginForm({
 }: React.ComponentProps<"div"> & { redirectTo?: string }) {
   const router = useRouter()
 
-  const onFormSubmit = async (e:React.SubmitEvent<HTMLElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const submittedData = Object.fromEntries(formData.entries()) as {
-          email: string,
-          password: string
-        }
-        const { data , error } = await authClient.signIn.email({
-          ...submittedData
-        })
-        if(data){
-          toast.success("Logged in successfully")
-          router.push(redirectTo)
-        }
-        if(error){
-          toast.error(error.message)
-        }
+  const onFormSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const form = new FormData(e.currentTarget)
+    const email = form.get("email") as string
+    const password = form.get("password") as string
+
+    const { error } = await authClient.signIn.email({ email, password })
+    if (error) return toast.error(error.message)
+
+    toast.success("Logged in successfully")
+    router.push(redirectTo)
   }
+
   const onClickGoogle = async () => {
     await authClient.signIn.social({
       provider: "google",
@@ -97,9 +94,11 @@ export function LoginForm({
               <Field>
                 <Button type="submit">Login</Button>
                 <Button onClick={onClickGoogle} variant="outline" type="button">
+                  <FcGoogle />
                   Login with Google
                 </Button>
                 <Button onClick={onClickGitHub} variant="outline" type="button">
+                  <FaGithub />
                   Login with GitHub
                 </Button>
                 <FieldDescription className="text-center">

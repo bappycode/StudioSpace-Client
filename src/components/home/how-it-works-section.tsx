@@ -38,7 +38,6 @@ const HowItWorksSection = () => (
             <ol className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
                 {steps.map(({ icon: Icon, title, text }, index) => (
                     <li key={title} className="relative">
-                        {/* Connector to the next step, only when steps sit in one row */}
                         {index < steps.length - 1 && (
                             <span className="absolute top-6 left-16 hidden h-px w-[calc(100%-3.5rem)] border-t border-dashed border-white/20 lg:block" />
                         )}

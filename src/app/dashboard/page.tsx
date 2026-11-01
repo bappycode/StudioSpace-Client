@@ -16,9 +16,16 @@ import {
 import { buttonVariants } from '@/components/ui/button';
 import StatTile from '@/components/stat-tile';
 import BookingStatusBadge from '@/components/bookings/booking-status-badge';
-import { formatBookingTime, getMyBookings, isUpcoming, sortByStartTime, type Booking } from '@/lib/bookings';
+import {
+    formatBookingTime,
+    getMyBookings,
+    isUpcoming,
+    sortByStartTime,
+    withCompletedStatus,
+    type Booking,
+} from '@/lib/bookings';
 import { formatAverageRating, getMyListings, type Studio } from '@/lib/studios';
-import { requireUser } from '@/lib/session';
+import { getServerToken, requireUser } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 
@@ -63,7 +70,6 @@ const PanelEmpty = ({ icon: Icon, message, action }: PanelEmptyProps) => (
     </div>
 );
 
-// Calendar-style date block; booking dates are plain YYYY-MM-DD, so read them in UTC
 const DateBlock = ({ date }: { date: string }) => {
     const day = new Date(date);
     const format = (options: Intl.DateTimeFormatOptions) =>
@@ -113,7 +119,12 @@ const ListingItem = ({ studio }: { studio: Studio }) => (
 
 const DashboardPage = async () => {
     const user = await requireUser('/dashboard');
-    const [bookings, listings] = await Promise.all([getMyBookings(user.email), getMyListings(user.email)]);
+    const token = await getServerToken();
+    const [myBookings, listings] = await Promise.all([
+        getMyBookings(user.email, token),
+        getMyListings(user.email, token),
+    ]);
+    const bookings = withCompletedStatus(myBookings);
 
     const upcoming = sortByStartTime(bookings.filter(isUpcoming));
     const bookedHours = bookings

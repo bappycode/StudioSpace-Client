@@ -28,7 +28,6 @@ type AmenityPickerProps = {
 
 const AmenityPicker = ({ value, onChange }: AmenityPickerProps) => {
     const [custom, setCustom] = useState('');
-    // Keep presets first, then any custom amenities (including ones loaded from an existing studio)
     const options = [...new Set([...presetAmenities, ...value])];
 
     const toggle = (amenity: string) =>
@@ -71,7 +70,6 @@ const AmenityPicker = ({ value, onChange }: AmenityPickerProps) => {
                     value={custom}
                     onChange={(e) => setCustom(e.target.value)}
                     onKeyDown={(e) => {
-                        // Enter adds the tag instead of submitting the whole form
                         if (e.key === 'Enter') {
                             e.preventDefault();
                             addCustom();

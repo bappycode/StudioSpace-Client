@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 const ThemeToggle = () => {
     const { resolvedTheme, setTheme } = useTheme();
 
-    // Both icons render and CSS picks one, so server and client markup match before the theme is known
     return (
         <Button
             variant="outline"

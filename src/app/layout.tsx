@@ -27,7 +27,6 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    // next-themes sets the theme class on <html> before hydration, so React must not warn about it
     <html
       lang="en"
       suppressHydrationWarning

@@ -1,6 +1,5 @@
-import { SERVER_URL, requestServer, sendJson } from '@/lib/api';
+import { getClientToken, requestServer } from '@/lib/api';
 
-// `label` names a single studio (badges, filters); `pluralLabel` names the category (footer, home cards)
 export const studioCategories = [
     { slug: 'photo-studio', label: 'Photo Studio', pluralLabel: 'Photo Studios' },
     { slug: 'film-stage', label: 'Film Stage', pluralLabel: 'Sound Stages' },
@@ -47,7 +46,6 @@ export type Studio = {
     reviews?: Review[];
 };
 
-// The host-editable fields; the PATCH route updates exactly these
 export type StudioInput = Pick<
     Studio,
     | 'title'
@@ -77,13 +75,42 @@ type SearchParams = Record<string, string | string[] | undefined>;
 export const getCategoryLabel = (slug: string) =>
     studioCategories.find((category) => category.slug === slug)?.label ?? slug;
 
-// Averages only rated studios; new listings without reviews would drag the number down
 export const formatAverageRating = (studios: Studio[]) => {
-    const ratings = studios.flatMap((studio) => (studio.rating ? [studio.rating] : []));
-    return ratings.length ? (ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length).toFixed(1) : '—';
+    const ratedStudios = studios.filter((studio) => studio.rating);
+    if (ratedStudios.length === 0) return '—';
+
+    const total = ratedStudios.reduce((sum, studio) => sum + (studio.rating ?? 0), 0);
+    return (total / ratedStudios.length).toFixed(1);
 };
 
-const isCategorySlug =(value?: string): value is CategorySlug =>
+export const getStudios = (category?: CategorySlug) =>
+    requestServer<Studio[]>(category ? `/studios/category/${category}` : '/studios');
+
+export const getFeaturedStudios = () => requestServer<Studio[]>('/featured-studios');
+
+export const getStudio = (id: string) => requestServer<Studio | null>(`/studios/${id}`).catch(() => null);
+
+export const getMyListings = (email: string, token: string) =>
+    requestServer<Studio[]>(`/my-listings/${encodeURIComponent(email)}`, { token });
+
+export const createStudio = async (input: StudioInput, owner: StudioOwner) =>
+    requestServer('/add-studios', {
+        method: 'POST',
+        body: { ...input, ownerName: owner.name, ownerEmail: owner.email, createdAt: new Date().toISOString() },
+        token: await getClientToken(),
+    });
+
+export const updateStudio = async (id: string, input: StudioInput, owner: StudioOwner) =>
+    requestServer(`/studios/${id}`, {
+        method: 'PATCH',
+        body: { ...input, ownerEmail: owner.email },
+        token: await getClientToken(),
+    });
+
+export const deleteStudio = async (id: string) =>
+    requestServer(`/studios/${id}`, { method: 'DELETE', token: await getClientToken() });
+
+const isCategorySlug = (value?: string): value is CategorySlug =>
     studioCategories.some((category) => category.slug === value);
 
 const isSortOption = (value?: string): value is SortOption =>
@@ -146,46 +173,4 @@ export const filterStudios = (studios: Studio[], { search, sort, minRate, maxRat
                 (maxRate === undefined || studio.hourlyRate <= maxRate)
         )
         .sort(compareStudios[sort]);
-};
-
-export const getStudios = async (category?: CategorySlug): Promise<Studio[]> => {
-    const path = category ? `/studios/category/${category}` : '/studios';
-    const res = await fetch(`${SERVER_URL}${path}`);
-    if (!res.ok) throw new Error(`Failed to load studios (${res.status})`);
-    return res.json();
-};
-
-// The server stores the body as-is, so ownership and the listing date are set here
-export const createStudio = (studio: StudioInput, owner: StudioOwner) =>
-    sendJson('/add-studios', 'POST', {
-        ...studio,
-        ownerName: owner.name,
-        ownerEmail: owner.email,
-        createdAt: new Date().toISOString(),
-    });
-
-// The server rejects with 403 unless ownerEmail matches the studio's owner
-export const updateStudio = (id: string, studio: StudioInput, ownerEmail: string) =>
-    sendJson(`/studios/${id}`, 'PATCH', { ...studio, ownerEmail });
-
-// The server only deletes when email matches the owner (403 otherwise)
-export const deleteStudio = (id: string, ownerEmail: string) =>
-    requestServer(`/studios/${id}?email=${encodeURIComponent(ownerEmail)}`, { method: 'DELETE' });
-
-export const getMyListings = (email: string): Promise<Studio[]> =>
-    requestServer(`/my-listings/${encodeURIComponent(email)}`);
-
-// Server returns the 6 top-rated studios, newest first on ties
-export const getFeaturedStudios = async (): Promise<Studio[]> => {
-    const res = await fetch(`${SERVER_URL}/featured-studios`);
-    if (!res.ok) throw new Error(`Failed to load featured studios (${res.status})`);
-    return res.json();
-};
-
-// Resolves to null for unknown ids (server sends null) and malformed ids (server sends 400)
-export const getStudio = async (id: string): Promise<Studio | null> => {
-    const res = await fetch(`${SERVER_URL}/studios/${id}`);
-    if (res.status === 400) return null;
-    if (!res.ok) throw new Error(`Failed to load studio (${res.status})`);
-    return res.json();
 };

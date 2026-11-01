@@ -11,7 +11,6 @@ const EditStudioPage = async ({ params }: PageProps<'/studios/edit/[id]'>) => {
     const user = await requireUser(`/studios/edit/${id}`);
     const studio = await getStudio(id);
 
-    // Non-owners get a 404 rather than a form the server would reject with 403 anyway
     if (!studio || studio.ownerEmail !== user.email) notFound();
 
     return (

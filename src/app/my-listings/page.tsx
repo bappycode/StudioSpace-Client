@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BuildingIcon, DollarSignIcon, MessageSquareIcon, PlusIcon, StarIcon } from 'lucide-react';
+import { BuildingIcon, DollarSignIcon, InboxIcon, MessageSquareIcon, PlusIcon, StarIcon } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import StatTile from '@/components/stat-tile';
 import ListingRow from '@/components/studios/listing-row';
 import { formatAverageRating, getMyListings } from '@/lib/studios';
-import { requireUser } from '@/lib/session';
+import { getServerToken, requireUser } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'My Studio Listings' };
 
@@ -28,7 +28,7 @@ const EmptyState = () => (
 
 const MyListingsPage = async () => {
     const user = await requireUser('/my-listings');
-    const studios = await getMyListings(user.email);
+    const studios = await getMyListings(user.email, await getServerToken());
 
     const reviewCount = studios.reduce((sum, studio) => sum + (studio.reviews?.length ?? 0), 0);
     const averageRate = studios.reduce((sum, studio) => sum + studio.hourlyRate, 0) / studios.length;
@@ -46,9 +46,17 @@ const MyListingsPage = async () => {
                     <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">My Studio Listings</h1>
                     <p className="mt-2 text-muted-foreground">Manage the spaces you host on StudioSpace.</p>
                 </div>
-                <Link href="/add-studio" className={buttonVariants({ size: 'lg', className: 'h-11 px-6' })}>
-                    <PlusIcon /> Add New Studio
-                </Link>
+                <div className="flex flex-wrap gap-3">
+                    <Link
+                        href="/booking-requests"
+                        className={buttonVariants({ variant: 'outline', size: 'lg', className: 'h-11 px-6' })}
+                    >
+                        <InboxIcon /> Booking Requests
+                    </Link>
+                    <Link href="/add-studio" className={buttonVariants({ size: 'lg', className: 'h-11 px-6' })}>
+                        <PlusIcon /> Add New Studio
+                    </Link>
+                </div>
             </header>
 
             {studios.length > 0 ? (

@@ -41,7 +41,6 @@ const StudiosPage = async ({ searchParams }: PageProps<'/studios'>) => {
                 </p>
             </header>
 
-            {/* Remount on every query change so the uncontrolled inputs pick up the new URL values */}
             <StudioFilters key={buildStudiosHref(query)} query={query} />
 
             {studios.length > 0 ? (

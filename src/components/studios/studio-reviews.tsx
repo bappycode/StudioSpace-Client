@@ -13,7 +13,6 @@ const Stars = ({ rating }: { rating: number }) => (
     </div>
 );
 
-// Review dates are plain YYYY-MM-DD, so format in UTC to avoid shifting the day
 const formatReviewDate = (date: string) =>
     new Date(date).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 

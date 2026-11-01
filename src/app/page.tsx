@@ -4,7 +4,6 @@ import GuaranteeSection from '@/components/home/guarantee-section';
 import HeroSlider from '@/components/home/hero-slider';
 import HowItWorksSection from '@/components/home/how-it-works-section';
 
-// Rebuild the page at most once a minute so new studios and ratings show up after deploy
 export const revalidate = 60;
 
 const HomePage = () => (

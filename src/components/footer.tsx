@@ -17,7 +17,6 @@ const quickLinks = [
     { href: '/add-studio', label: 'Host Your Space' },
 ];
 
-
 const socials = [
     { href: 'https://x.com', label: 'X', icon: FaXTwitter },
     { href: 'https://instagram.com', label: 'Instagram', icon: FaInstagram },

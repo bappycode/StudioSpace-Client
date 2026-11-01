@@ -10,14 +10,6 @@ A peer-to-peer marketplace for creative spaces. Hosts list photo studios, sound 
 | Server repository | https://github.com/bappycode/studio-space-server |
 | API | https://studio-space-server-kappa.vercel.app |
 
-## Test credentials
-
-| Email | Password |
-|---|---|
-| `TODO: examiner email` | `TODO: password` |
-
-You can also sign in with Google or GitHub.
-
 ## Features
 
 - **Explore and filter studios.** Search by title, equipment or city, filter by category and hourly rate, and sort by newest, rating or price. Filters live in the URL, so any filtered view can be shared or reloaded.

@@ -4,7 +4,7 @@ import { Trash2Icon } from 'lucide-react';
 import ConfirmDialog from '@/components/confirm-dialog';
 import { deleteStudio, type Studio } from '@/lib/studios';
 
-const DeleteStudioButton = ({ studio }: { studio: Pick<Studio, '_id' | 'title' | 'ownerEmail'> }) => (
+const DeleteStudioButton = ({ studio }: { studio: Pick<Studio, '_id' | 'title'> }) => (
     <ConfirmDialog
         trigger={
             <>
@@ -16,7 +16,7 @@ const DeleteStudioButton = ({ studio }: { studio: Pick<Studio, '_id' | 'title' |
         cancelLabel="Keep Listing"
         confirmLabel="Yes, Delete"
         successMessage="Studio deleted."
-        onConfirm={() => deleteStudio(studio._id, studio.ownerEmail)}
+        onConfirm={() => deleteStudio(studio._id)}
     />
 );
 

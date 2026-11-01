@@ -41,7 +41,6 @@ const CategorySection = async () => {
                 action={{ href: '/studios', label: 'View all studios' }}
             />
 
-            {/* The first category takes a 2×2 tile; the other four fill the remaining 2×2 block */}
             <div className="grid auto-rows-[200px] gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[220px]">
                 {studioCategories.map(({ slug, pluralLabel }, index) => {
                     const { icon: Icon, image } = categoryVisuals[slug];

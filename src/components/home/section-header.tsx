@@ -8,7 +8,6 @@ type SectionHeaderProps = {
     action?: { href: string; label: string };
 };
 
-// Shared heading block so every home section uses the same type scale and spacing
 const SectionHeader = ({ eyebrow, title, description, action }: SectionHeaderProps) => (
     <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>

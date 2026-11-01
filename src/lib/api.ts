@@ -1,16 +1,42 @@
-export const SERVER_URL = (process.env.NEXT_PUBLIC_SERVER_URL ?? '').replace(/\/+$/, '');
+const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL?.replace(/\/+$/, '');
 
-// Throws with the server's `message` (403, 409, …) so callers can show it in a toast
-export const requestServer = async (path: string, init?: RequestInit) => {
-    const res = await fetch(`${SERVER_URL}${path}`, init);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message ?? `Request failed (${res.status})`);
-    return data;
+type RequestOptions = {
+    method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+    body?: unknown;
+    token?: string;
 };
 
-export const sendJson = (path: string, method: 'POST' | 'PATCH', body: unknown) =>
-    requestServer(path, {
+export const requestServer = async <T>(path: string, { method = 'GET', body, token }: RequestOptions = {}) => {
+    const headers: Record<string, string> = {};
+    if (body) headers['Content-Type'] = 'application/json';
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const res = await fetch(`${SERVER_URL}${path}`, {
         method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        headers,
+        body: body ? JSON.stringify(body) : undefined,
     });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.message ?? 'Something went wrong. Please try again.');
+    return data as T;
+};
+
+export const getClientToken = async () => {
+    const res = await fetch('/api/auth/token');
+    const { token } = await res.json();
+    return token as string;
+};
+
+export const uploadImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`, {
+        method: 'POST',
+        body: formData,
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error('Image upload failed. Please try another image.');
+
+    return data.data.display_url as string;
+};

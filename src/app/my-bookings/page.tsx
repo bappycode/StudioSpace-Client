@@ -3,14 +3,18 @@ import Link from 'next/link';
 import { CalendarXIcon } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import BookingCard from '@/components/bookings/booking-card';
-import { bookingStatuses, getMyBookings, sortByStartTime, type BookingStatus } from '@/lib/bookings';
-import { requireUser } from '@/lib/session';
+import StatusTabs from '@/components/bookings/status-tabs';
+import {
+    filterByStatus,
+    getMyBookings,
+    isBookingStatus,
+    sortByStartTime,
+    withCompletedStatus,
+    type BookingStatus,
+} from '@/lib/bookings';
+import { getServerToken, requireUser } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'My Bookings' };
-
-const isBookingStatus = (value: unknown): value is BookingStatus => bookingStatuses.includes(value as BookingStatus);
-
-const filterTabs = [undefined, ...bookingStatuses];
 
 const EmptyState = ({ status }: { status?: BookingStatus }) => (
     <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed px-6 py-16 text-center">
@@ -34,10 +38,9 @@ const MyBookingsPage = async ({ searchParams }: PageProps<'/my-bookings'>) => {
     const { status } = await searchParams;
     const activeStatus = isBookingStatus(status) ? status : undefined;
 
-    const bookings = sortByStartTime(await getMyBookings(user.email));
-    const visibleBookings = activeStatus ? bookings.filter((booking) => booking.status === activeStatus) : bookings;
-    const countFor = (tab?: BookingStatus) =>
-        tab ? bookings.filter((booking) => booking.status === tab).length : bookings.length;
+    const myBookings = await getMyBookings(user.email, await getServerToken());
+    const bookings = sortByStartTime(withCompletedStatus(myBookings));
+    const visibleBookings = filterByStatus(bookings, activeStatus);
 
     return (
         <main className="mx-auto w-full max-w-5xl px-4 py-12">
@@ -48,22 +51,7 @@ const MyBookingsPage = async ({ searchParams }: PageProps<'/my-bookings'>) => {
                 </p>
             </header>
 
-            <nav aria-label="Filter by status" className="mb-8 flex gap-2 overflow-x-auto pb-1">
-                {filterTabs.map((tab) => (
-                    <Link
-                        key={tab ?? 'All'}
-                        href={tab ? `/my-bookings?status=${tab}` : '/my-bookings'}
-                        aria-current={tab === activeStatus ? 'page' : undefined}
-                        className={buttonVariants({
-                            variant: tab === activeStatus ? 'default' : 'secondary',
-                            className: 'rounded-full',
-                        })}
-                    >
-                        {tab ?? 'All'}
-                        <span className="text-xs opacity-70">{countFor(tab)}</span>
-                    </Link>
-                ))}
-            </nav>
+            <StatusTabs basePath="/my-bookings" bookings={bookings} activeStatus={activeStatus} />
 
             {visibleBookings.length > 0 ? (
                 <ul className="space-y-4">

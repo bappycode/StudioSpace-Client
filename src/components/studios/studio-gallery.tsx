@@ -11,7 +11,8 @@ const navButtonClass = 'absolute top-1/2 -translate-y-1/2 rounded-full bg-backgr
 const StudioGallery = ({ images, title }: { images: string[]; title: string }) => {
     const [active, setActive] = useState(0);
     const count = images.length;
-    const show = (index: number) => setActive((index + count) % count);
+    const showPrevious = () => setActive(active === 0 ? count - 1 : active - 1);
+    const showNext = () => setActive(active === count - 1 ? 0 : active + 1);
 
     return (
         <div className="space-y-3">
@@ -31,7 +32,7 @@ const StudioGallery = ({ images, title }: { images: string[]; title: string }) =
                             variant="secondary"
                             size="icon-lg"
                             aria-label="Previous photo"
-                            onClick={() => show(active - 1)}
+                            onClick={showPrevious}
                             className={cn(navButtonClass, 'left-4')}
                         >
                             <ChevronLeftIcon />
@@ -40,7 +41,7 @@ const StudioGallery = ({ images, title }: { images: string[]; title: string }) =
                             variant="secondary"
                             size="icon-lg"
                             aria-label="Next photo"
-                            onClick={() => show(active + 1)}
+                            onClick={showNext}
                             className={cn(navButtonClass, 'right-4')}
                         >
                             <ChevronRightIcon />

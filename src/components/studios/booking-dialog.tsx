@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth-client';
-import { createBooking, getBookedHours, getToday } from '@/lib/bookings';
+import { createBooking, getBookedHours, getToday, type BookingRequest } from '@/lib/bookings';
 import type { Studio } from '@/lib/studios';
 
 type BookingDialogProps = {
@@ -66,21 +66,23 @@ const BookingDialog = ({ studio }: BookingDialogProps) => {
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        const booking: BookingRequest = {
+            studioId: studio._id,
+            studioTitle: studio.title,
+            studioImage: studio.image,
+            location: studio.location,
+            email: session.user.email,
+            userName: session.user.name,
+            date: new FormData(e.currentTarget).get('date') as string,
+            startTime,
+            endTime,
+            hours,
+            totalPrice: rentalCost,
+        };
+
         setSubmitting(true);
         try {
-            await createBooking({
-                studioId: studio._id,
-                studioTitle: studio.title,
-                studioImage: studio.image,
-                location: studio.location,
-                email: session.user.email,
-                userName: session.user.name,
-                date: new FormData(e.currentTarget).get('date') as string,
-                startTime,
-                endTime,
-                hours,
-                totalPrice: rentalCost,
-            });
+            await createBooking(booking);
             toast.success('Booking requested! It stays Pending until the host confirms.');
             setOpen(false);
         } catch (error) {
