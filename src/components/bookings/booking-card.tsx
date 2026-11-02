@@ -5,6 +5,7 @@ import { cn } from 'cn';
 import BookingStatusBadge from '@/components/bookings/booking-status-badge';
 import CancelBookingButton from '@/components/bookings/cancel-booking-button';
 import ConfirmBookingButton from '@/components/bookings/confirm-booking-button';
+import DownloadReceiptButton from '@/components/bookings/download-receipt-button';
 import { formatBookingDate, formatBookingTime, type Booking, type BookingView } from '@/lib/bookings';
 
 const DetailChip = ({ icon: Icon, children }: { icon: typeof CalendarIcon; children: React.ReactNode }) => (
@@ -46,6 +47,7 @@ const BookingCard = ({ booking, view = 'guest' }: BookingCardProps) => {
         cancelledBy,
     } = booking;
     const isPending = status === 'Pending';
+    const hasReceipt = status === 'Confirmed' || status === 'Completed';
     const cancelledNote = status === 'Cancelled' ? getCancelledNote(cancelledBy, view) : null;
 
     return (
@@ -95,6 +97,7 @@ const BookingCard = ({ booking, view = 'guest' }: BookingCardProps) => {
                     <p className="text-2xl font-bold tracking-tight">${totalPrice}</p>
                 </div>
                 {isPending && view === 'guest' && <CancelBookingButton booking={booking} />}
+                {hasReceipt && view === 'guest' && <DownloadReceiptButton booking={booking} />}
                 {isPending && view === 'host' && (
                     <div className="flex flex-wrap gap-2 sm:justify-end">
                         <ConfirmBookingButton bookingId={_id} />

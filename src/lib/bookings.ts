@@ -58,9 +58,9 @@ const toMinutes = (time: string) => {
 export const getBookedHours = (startTime: string, endTime: string) =>
     startTime && endTime ? (toMinutes(endTime) - toMinutes(startTime)) / 60 : 0;
 
-export const getToday = () => new Date().toLocaleDateString('en-CA');
+export const getToday = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Dhaka' });
 
-const hasEnded = (booking: Booking) => new Date(`${booking.date}T${booking.endTime}`) <= new Date();
+const hasEnded = (booking: Booking) => new Date(`${booking.date}T${booking.endTime}+06:00`) <= new Date();
 
 export const withCompletedStatus = (bookings: Booking[]): Booking[] =>
     bookings.map((booking) =>
