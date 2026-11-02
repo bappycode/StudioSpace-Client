@@ -16,7 +16,7 @@ const StudioGallery = ({ images, title }: { images: string[]; title: string }) =
 
     return (
         <div className="space-y-3">
-            <div className="relative aspect-video overflow-hidden rounded-3xl bg-muted">
+            <div className="relative aspect-video overflow-hidden rounded-3xl bg-muted lg:aspect-21/9">
                 <Image
                     src={images[active]}
                     alt={`${title} — photo ${active + 1} of ${count}`}
@@ -54,7 +54,7 @@ const StudioGallery = ({ images, title }: { images: string[]; title: string }) =
             </div>
 
             {count > 1 && (
-                <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
+                <div className="flex flex-wrap gap-3">
                     {images.map((src, index) => (
                         <button
                             key={src}
@@ -63,11 +63,11 @@ const StudioGallery = ({ images, title }: { images: string[]; title: string }) =
                             aria-label={`Show photo ${index + 1}`}
                             aria-current={index === active}
                             className={cn(
-                                'relative aspect-4/3 overflow-hidden rounded-xl ring-2 ring-offset-2 ring-offset-background transition',
+                                'relative aspect-4/3 w-20 overflow-hidden rounded-xl ring-2 ring-offset-2 ring-offset-background transition sm:w-28',
                                 index === active ? 'ring-primary' : 'ring-transparent opacity-60 hover:opacity-100'
                             )}
                         >
-                            <Image src={src} alt="" fill sizes="160px" className="object-cover" />
+                            <Image src={src} alt="" fill sizes="112px" className="object-cover" />
                         </button>
                     ))}
                 </div>

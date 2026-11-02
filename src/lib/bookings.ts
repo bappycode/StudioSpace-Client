@@ -11,7 +11,6 @@ export type BookingRequest = {
     studioTitle: string;
     studioImage: string;
     location: string;
-    email: string;
     userName: string;
     date: string;
     startTime: string;
@@ -22,6 +21,7 @@ export type BookingRequest = {
 
 export type Booking = BookingRequest & {
     _id: string;
+    email: string;
     status: BookingStatus;
     cancelledBy?: 'Client' | 'Owner';
 };

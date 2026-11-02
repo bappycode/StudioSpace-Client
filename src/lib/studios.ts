@@ -93,19 +93,15 @@ export const getStudio = (id: string) => requestServer<Studio | null>(`/studios/
 export const getMyListings = (email: string, token: string) =>
     requestServer<Studio[]>(`/my-listings/${encodeURIComponent(email)}`, { token });
 
-export const createStudio = async (input: StudioInput, owner: StudioOwner) =>
+export const createStudio = async (input: StudioInput, ownerName: string) =>
     requestServer('/add-studios', {
         method: 'POST',
-        body: { ...input, ownerName: owner.name, ownerEmail: owner.email, createdAt: new Date().toISOString() },
+        body: { ...input, ownerName, createdAt: new Date().toISOString() },
         token: await getClientToken(),
     });
 
-export const updateStudio = async (id: string, input: StudioInput, owner: StudioOwner) =>
-    requestServer(`/studios/${id}`, {
-        method: 'PATCH',
-        body: { ...input, ownerEmail: owner.email },
-        token: await getClientToken(),
-    });
+export const updateStudio = async (id: string, input: StudioInput) =>
+    requestServer(`/studios/${id}`, { method: 'PATCH', body: input, token: await getClientToken() });
 
 export const deleteStudio = async (id: string) =>
     requestServer(`/studios/${id}`, { method: 'DELETE', token: await getClientToken() });

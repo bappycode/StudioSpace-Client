@@ -51,7 +51,7 @@ const HeroSlider = () => {
 
     return (
         <section className="mx-auto w-full max-w-7xl px-4 pt-4 sm:pt-6">
-            <div className="relative isolate h-[68svh] max-h-160 min-h-120 overflow-hidden rounded-3xl bg-black text-white ring-1 ring-foreground/10">
+            <div className="relative isolate h-[68svh] max-h-140 min-h-120 overflow-hidden rounded-3xl bg-black text-white ring-1 ring-foreground/10">
                 <Swiper
                     modules={[Autoplay, EffectFade, Keyboard]}
                     effect="fade"
@@ -94,7 +94,7 @@ const HeroSlider = () => {
                                         </span>
                                         <Heading
                                             className={cn(
-                                                'text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl',
+                                                'text-4xl font-bold tracking-tight text-balance sm:text-5xl',
                                                 revealClass,
                                                 'delay-100'
                                             )}

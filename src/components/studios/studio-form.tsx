@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, XIcon } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Field,
@@ -30,16 +31,15 @@ import {
 
 type FormValues = Omit<
   StudioInput,
-  "category" | "hourlyRate" | "securityDeposit" | "maxCapacity" | "gallery"
+  "category" | "hourlyRate" | "securityDeposit" | "maxCapacity"
 > & {
   category: CategorySlug | "";
   hourlyRate: string;
   securityDeposit: string;
   maxCapacity: string;
-  gallery: string;
 };
 
-type FormErrors = Partial<Record<"gallery" | "amenities", string>>;
+type FormErrors = Partial<Record<"image" | "amenities", string>>;
 
 const toFormValues = (studio?: Studio): FormValues => ({
   title: studio?.title ?? "",
@@ -49,16 +49,10 @@ const toFormValues = (studio?: Studio): FormValues => ({
   maxCapacity: studio ? String(studio.maxCapacity) : "",
   location: studio?.location ?? "",
   image: studio?.image ?? "",
-  gallery: studio?.gallery.join("\n") ?? "",
+  gallery: studio?.gallery ?? [],
   amenities: studio?.amenities ?? [],
   overview: studio?.overview ?? "",
 });
-
-const parseGallery = (gallery: string) =>
-  gallery
-    .split("\n")
-    .map((url) => url.trim())
-    .filter(Boolean);
 
 const toStudioInput = (values: FormValues): StudioInput => ({
   ...values,
@@ -68,23 +62,12 @@ const toStudioInput = (values: FormValues): StudioInput => ({
   securityDeposit: Number(values.securityDeposit),
   maxCapacity: Number(values.maxCapacity),
   location: values.location.trim(),
-  image: values.image.trim(),
-  gallery: parseGallery(values.gallery),
   overview: values.overview.trim(),
 });
 
-const isHttpsUrl = (value: string) => {
-  try {
-    return new URL(value).protocol === "https:";
-  } catch {
-    return false;
-  }
-};
-
 const validate = (values: FormValues): FormErrors => {
   const errors: FormErrors = {};
-  if (!parseGallery(values.gallery).every(isHttpsUrl))
-    errors.gallery = "Every gallery link must start with https://";
+  if (!values.image) errors.image = "Upload a cover image.";
   if (values.amenities.length === 0)
     errors.amenities = "Pick at least one amenity.";
   return errors;
@@ -98,6 +81,27 @@ type FormSectionProps = {
   description: string;
   children: React.ReactNode;
 };
+
+type PhotoThumbProps = {
+  src: string;
+  onRemove?: () => void;
+};
+
+const PhotoThumb = ({ src, onRemove }: PhotoThumbProps) => (
+  <div className="relative size-20 overflow-hidden rounded-lg border">
+    <Image src={src} alt="" fill sizes="80px" className="object-cover" />
+    {onRemove && (
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label="Remove photo"
+        className="absolute top-1 right-1 flex size-6 items-center justify-center rounded-full bg-black/70 text-white hover:bg-black"
+      >
+        <XIcon className="size-3.5" />
+      </button>
+    )}
+  </div>
+);
 
 const FormSection = ({ title, description, children }: FormSectionProps) => (
   <section className="rounded-3xl border bg-card p-6 sm:p-8">
@@ -152,7 +156,7 @@ const StudioForm = ({ host, studio }: StudioFormProps) => {
       const urls = await Promise.all(files.map(uploadImage));
       setValues((prev) => ({
         ...prev,
-        gallery: [...parseGallery(prev.gallery), ...urls].join("\n"),
+        gallery: [...prev.gallery, ...urls],
       }));
       toast.success(`${urls.length} photo(s) uploaded`);
     } catch (error) {
@@ -174,8 +178,8 @@ const StudioForm = ({ host, studio }: StudioFormProps) => {
     setSubmitting(true);
     try {
       const input = toStudioInput(values);
-      if (studio) await updateStudio(studio._id, input, host);
-      else await createStudio(input, host);
+      if (studio) await updateStudio(studio._id, input);
+      else await createStudio(input, host.name);
 
       toast.success(
         studio
@@ -331,7 +335,7 @@ const StudioForm = ({ host, studio }: StudioFormProps) => {
 
         <FormSection
           title="Location & photos"
-          description="Upload photos or paste direct https image links."
+          description="Upload a cover image and gallery photos."
         >
           <Field>
             <FieldLabel htmlFor="location">Location / address</FieldLabel>
@@ -344,35 +348,24 @@ const StudioForm = ({ host, studio }: StudioFormProps) => {
               className="h-10"
             />
           </Field>
-          <Field>
-            <FieldLabel htmlFor="cover-upload">Upload cover image</FieldLabel>
+          <Field data-invalid={Boolean(errors.image)}>
+            <FieldLabel htmlFor="cover-upload">Cover image</FieldLabel>
             <Input
               id="cover-upload"
               type="file"
               accept="image/*"
               onChange={handleCoverUpload}
               disabled={uploading}
+              aria-invalid={Boolean(errors.image)}
               className="h-10"
             />
+            {values.image && <PhotoThumb src={values.image} />}
+            {errors.image && <FieldError>{errors.image}</FieldError>}
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="image">Cover image URL</FieldLabel>
-            <Input
-              id="image"
-              type="url"
-              required
-              pattern="https://.*"
-              title="Use an https:// link"
-              value={values.image}
-              onChange={(e) => setField("image", e.target.value)}
-              placeholder="https://i.ibb.co/…/studio.jpg"
-              className="h-10"
-            />
-          </Field>
-          <Field>
             <FieldLabel htmlFor="gallery-upload">
-              Upload gallery photos
+              Gallery photos (optional)
             </FieldLabel>
             <Input
               id="gallery-upload"
@@ -383,27 +376,25 @@ const StudioForm = ({ host, studio }: StudioFormProps) => {
               disabled={uploading}
               className="h-10"
             />
-          </Field>
-
-          <Field data-invalid={Boolean(errors.gallery)}>
-            <FieldLabel htmlFor="gallery">
-              Gallery image URLs (optional)
-            </FieldLabel>
-            <Textarea
-              id="gallery"
-              className="min-h-24"
-              value={values.gallery}
-              onChange={(e) => setField("gallery", e.target.value)}
-              aria-invalid={Boolean(errors.gallery)}
-              placeholder="One link per line"
-            />
-            {errors.gallery ? (
-              <FieldError>{errors.gallery}</FieldError>
-            ) : (
-              <FieldDescription>
-                Shown in the photo carousel on your studio page.
-              </FieldDescription>
+            {values.gallery.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {values.gallery.map((url) => (
+                  <PhotoThumb
+                    key={url}
+                    src={url}
+                    onRemove={() =>
+                      setField(
+                        "gallery",
+                        values.gallery.filter((item) => item !== url),
+                      )
+                    }
+                  />
+                ))}
+              </div>
             )}
+            <FieldDescription>
+              Shown in the photo carousel on your studio page.
+            </FieldDescription>
           </Field>
         </FormSection>
 
@@ -452,7 +443,7 @@ const StudioForm = ({ host, studio }: StudioFormProps) => {
         <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
           Live preview
         </p>
-        {isHttpsUrl(values.image) ? (
+        {values.image ? (
           <div inert>
             <StudioCard studio={preview} />
           </div>

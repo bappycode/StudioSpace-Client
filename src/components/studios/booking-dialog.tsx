@@ -71,7 +71,6 @@ const BookingDialog = ({ studio }: BookingDialogProps) => {
             studioTitle: studio.title,
             studioImage: studio.image,
             location: studio.location,
-            email: session.user.email,
             userName: session.user.name,
             date: new FormData(e.currentTarget).get('date') as string,
             startTime,
