@@ -16,6 +16,7 @@ import { buttonVariants } from '@/components/ui/button';
 import BookingDialog from '@/components/studios/booking-dialog';
 import StudioGallery from '@/components/studios/studio-gallery';
 import StudioReviews from '@/components/studios/studio-reviews';
+import WishlistButton from '@/components/studios/wishlist-button';
 import { buildStudiosHref, getCategoryLabel, getStudio } from '@/lib/studios';
 
 export const generateMetadata = async ({ params }: PageProps<'/studios/[id]'>): Promise<Metadata> => {
@@ -99,7 +100,10 @@ const StudioDetailsPage = async ({ params }: PageProps<'/studios/[id]'>) => {
                 <span className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
                     {categoryLabel}
                 </span>
-                <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                    <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
+                    <WishlistButton studioId={id} showLabel />
+                </div>
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1.5">
                         <StarIcon className="size-4 fill-primary text-primary" />
