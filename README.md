@@ -10,6 +10,7 @@ A peer-to-peer marketplace for creative spaces. Hosts list photo studios, sound 
 - **Studio details with booking.** A photo carousel, specs, amenities, host details and reviews, with a booking modal that totals the cost as you pick a date and hours.
 - **Double-booking prevention.** The server rejects any booking that overlaps an existing Pending or Confirmed slot for the same studio and date, and the reason is shown in a toast.
 - **Host tools.** Add a studio with image upload and a live preview of its listing card, update it from a pre-filled form, or delete it after a confirmation modal.
+- **Wishlist.** Tap the heart on any studio to save it, and find saved studios on the My Wishlist page.
 - **Booking requests.** Hosts confirm or cancel requests on their studios, and both sides can see who cancelled a booking.
 - **My Bookings with PDF receipts.** Every booking with its status (Pending, Confirmed, Completed, Cancelled), filter tabs, cancellation for pending bookings, and a downloadable PDF receipt for confirmed ones.
 - **Secure authentication.** Email and password sign-up with password rules, plus Google and GitHub sign-in. Private pages stay private on reload, and the API accepts changes only with a valid JWT.

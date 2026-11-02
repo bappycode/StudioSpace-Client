@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { CalendarCheckIcon, ChevronDownIcon, InboxIcon, LayoutDashboardIcon, ListIcon, LogOutIcon, MenuIcon, PlusIcon } from 'lucide-react';
+import { CalendarCheckIcon, ChevronDownIcon, HeartIcon, InboxIcon, LayoutDashboardIcon, ListIcon, LogOutIcon, MenuIcon, PlusIcon } from 'lucide-react';
 import { cn } from 'cn';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -34,6 +34,7 @@ const userLinks = [
     { href: '/add-studio', label: 'Add New Studio', icon: PlusIcon },
     { href: '/my-listings', label: 'My Studio Listings', icon: ListIcon },
     { href: '/my-bookings', label: 'My Bookings', icon: CalendarCheckIcon },
+    { href: '/wishlist', label: 'My Wishlist', icon: HeartIcon },
     { href: '/booking-requests', label: 'Booking Requests', icon: InboxIcon },
 ];
 

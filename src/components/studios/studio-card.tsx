@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowRightIcon, MapPinIcon, StarIcon, UsersIcon } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import WishlistButton from '@/components/studios/wishlist-button';
 import { getCategoryLabel, type Studio } from '@/lib/studios';
 
 const StudioCard = ({ studio }: { studio: Studio }) => {
@@ -11,17 +12,18 @@ const StudioCard = ({ studio }: { studio: Studio }) => {
 
     return (
         <Card className="h-full gap-0 py-0 transition-shadow hover:shadow-lg">
-            <div className="relative aspect-4/3">
+            <div className="relative aspect-3/2">
                 <Image
                     src={image}
                     alt={title}
                     fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     className="object-cover"
                 />
                 <span className="absolute top-3 left-3 rounded-full bg-background/90 px-2.5 py-1 text-xs font-medium text-primary backdrop-blur">
                     {getCategoryLabel(category)}
                 </span>
+                <WishlistButton studioId={_id} />
                 <span className="absolute bottom-3 left-3 rounded-full bg-black/70 px-3 py-1 text-sm font-semibold text-white">
                     ${hourlyRate}
                     <span className="text-xs font-normal text-white/70"> / hr</span>
